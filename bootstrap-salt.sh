@@ -1707,7 +1707,7 @@ __debian_codename_translation() {
         "10")
             DISTRO_CODENAME="buster"
             ;;
-        "11")
+        "11"|"12")
             DISTRO_CODENAME="bullseye"
             ;;
         *)
@@ -3638,6 +3638,11 @@ __install_saltstack_debian_repository() {
     # Install downloader backend for GPG keys fetching
     __PACKAGES='wget'
 
+    # There is no support for Debian 12
+    if [ "$DISTRO_MAJOR_VERSION" -ge 12 ]; then
+       DEBIAN_RELEASE=11
+    fi
+
     # Required as it is not installed by default on Debian 9+
     if [ "$DISTRO_MAJOR_VERSION" -ge 9 ]; then
         __PACKAGES="${__PACKAGES} gnupg2"
@@ -3672,6 +3677,11 @@ __install_saltstack_debian_onedir_repository() {
     # Install downloader backend for GPG keys fetching
     __PACKAGES='wget'
 
+    # There is no support for Debian 12
+    if [ "$DISTRO_MAJOR_VERSION" -ge 12 ]; then
+       DEBIAN_RELEASE=11
+    fi
+
     # Required as it is not installed by default on Debian 9+
     if [ "$DISTRO_MAJOR_VERSION" -ge 9 ]; then
         __PACKAGES="${__PACKAGES} gnupg2"
@@ -3695,8 +3705,8 @@ __install_saltstack_debian_onedir_repository() {
     if [ "$(echo "${ONEDIR_REV}" | grep -E '(3004|3005)')" != "" ]; then
       __apt_key_fetch "${SALTSTACK_DEBIAN_URL}salt-archive-keyring.gpg" || return 1
     elif [ "$(echo "${ONEDIR_REV}" | grep -E '(latest|nightly)')" != "" ]; then
-      __apt_key_fetch "${SALTSTACK_DEBIAN_URL}salt-archive-keyring.gpg" || \
-      __apt_key_fetch "${SALTSTACK_DEBIAN_URL}SALT-PROJECT-GPG-PUBKEY-2023.gpg" || return 1
+      __apt_key_fetch "${SALTSTACK_DEBIAN_URL}../salt-archive-keyring.gpg" || \
+      __apt_key_fetch "${SALTSTACK_DEBIAN_URL}../SALT-PROJECT-GPG-PUBKEY-2023.gpg" || return 1
     else
       __apt_key_fetch "${SALTSTACK_DEBIAN_URL}SALT-PROJECT-GPG-PUBKEY-2023.gpg" || return 1
     fi
